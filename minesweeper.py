@@ -6,24 +6,32 @@ class MinesweeperApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Minesweeper")
+        # default settings
+        self.rows = 10
+        self.cols = 10
+        self.num_mines = 10
+        
         self.menu_frame = tk.Frame(self.root, padx=20, pady=20)
         self.game_frame = tk.Frame(self.root)
         self.show_menu()
 
     def show_menu(self):
-        # clear game and show menu
         self.game_frame.pack_forget()
         for widget in self.game_frame.winfo_children(): widget.destroy()
         self.menu_frame.pack()
         if not self.menu_frame.winfo_children():
             tk.Label(self.menu_frame, text="MINESWEEPER", font=("Arial", 20, "bold")).pack(pady=20)
             tk.Button(self.menu_frame, text="Start Game", width=15, command=self.start_game).pack(pady=5)
+            tk.Button(self.menu_frame, text="Settings", width=15, command=self.show_settings).pack(pady=5)
             tk.Button(self.menu_frame, text="Exit", width=15, command=self.root.destroy).pack(pady=5)
 
     def start_game(self):
         self.menu_frame.pack_forget()
         self.game_frame.pack()
-        MinesweeperGame(self.game_frame, self.show_menu, 10, 10, 10)
+        MinesweeperGame(self.game_frame, self.show_menu, self.rows, self.cols, self.num_mines)
+
+    def show_settings(self):
+        messagebox.showinfo("Settings", "Custom grid sizes coming soon!")
 
 class MinesweeperGame:
     def __init__(self, parent, back_cb, rows, cols, num_mines):
