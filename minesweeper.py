@@ -1,12 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 import random
 
 class MinesweeperApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Minesweeper")
-        # default settings
         self.rows = 10
         self.cols = 10
         self.num_mines = 10
@@ -31,7 +30,35 @@ class MinesweeperApp:
         MinesweeperGame(self.game_frame, self.show_menu, self.rows, self.cols, self.num_mines)
 
     def show_settings(self):
-        messagebox.showinfo("Settings", "Custom grid sizes coming soon!")
+        # ask for custom size and catch errors
+        try:
+            r_str = simpledialog.askstring("Settings", "Enter rows:", parent=self.root)
+            if r_str is None: return
+            r = int(r_str)
+
+            c_str = simpledialog.askstring("Settings", "Enter columns:", parent=self.root)
+            if c_str is None: return
+            c = int(c_str)
+
+            m_str = simpledialog.askstring("Settings", "Enter mines:", parent=self.root)
+            if m_str is None: return
+            m = int(m_str)
+
+            if m >= (r * c):
+                raise ValueError("Too many mines!")
+            if r < 5 or c < 5:
+                raise ValueError("Grid is too small!")
+
+            self.rows, self.cols, self.num_mines = r, c, m
+            messagebox.showinfo("Success", f"Grid updated to {r}x{c} with {m} mines.")
+
+        except ValueError as e:
+            # handle invalid inputs like letters instead of numbers
+            error_msg = str(e)
+            if "invalid literal" in error_msg:
+                error_msg = "Please enter numbers only!"
+            messagebox.showerror("Error", f"{error_msg}\nResetting to default.")
+            self.rows, self.cols, self.num_mines = 10, 10, 10
 
 class MinesweeperGame:
     def __init__(self, parent, back_cb, rows, cols, num_mines):
